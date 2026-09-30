@@ -1,0 +1,22 @@
+@model Ticket
+@{
+    ViewData["Title"] = "Create ticket";
+}
+
+<div class="page-header">
+    <div><p class="eyebrow">NEW INCIDENT</p><h1>Create ticket</h1><p>Document the issue clearly so it can be prioritized and tracked.</p></div>
+</div>
+
+<form asp-action="Create" method="post" class="panel form-panel">
+    <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+    <div class="form-grid">
+        <div class="field span-2"><label asp-for="Title"></label><input asp-for="Title" /><span asp-validation-for="Title"></span></div>
+        <div class="field span-2"><label asp-for="Description"></label><textarea asp-for="Description" rows="7"></textarea><span asp-validation-for="Description"></span></div>
+        <div class="field"><label asp-for="RequesterName"></label><input asp-for="RequesterName" /><span asp-validation-for="RequesterName"></span></div>
+        <div class="field"><label asp-for="RequesterEmail"></label><input asp-for="RequesterEmail" /><span asp-validation-for="RequesterEmail"></span></div>
+        <div class="field"><label asp-for="Category"></label><input asp-for="Category" /><span asp-validation-for="Category"></span></div>
+        <div class="field"><label asp-for="Priority"></label><select asp-for="Priority" asp-items="Html.GetEnumSelectList<TicketPriority>()"></select></div>
+        <div class="field"><label asp-for="Status"></label><select asp-for="Status" asp-items="Html.GetEnumSelectList<TicketStatus>()"></select></div>
+    </div>
+    <div class="form-actions"><a class="button button-ghost" asp-action="Index">Cancel</a><button class="button button-primary" type="submit">Create ticket</button></div>
+</form>

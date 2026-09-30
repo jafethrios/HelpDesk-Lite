@@ -1,0 +1,31 @@
+@model Ticket
+@{
+    ViewData["Title"] = $"Ticket #{Model.Id}";
+    var statusClass = Model.Status switch
+    {
+        TicketStatus.Open => "badge-open",
+        TicketStatus.InProgress => "badge-progress",
+        TicketStatus.Resolved => "badge-resolved",
+        _ => "badge-closed"
+    };
+    var priorityClass = Model.Priority switch
+    {
+        TicketPriority.Critical => "badge-critical",
+        TicketPriority.High => "badge-high",
+        TicketPriority.Medium => "badge-medium",
+        _ => "badge-low"
+    };
+}
+
+<div class="page-header">
+    <div><p class="eyebrow">TICKET #@Model.Id</p><h1>@Model.Title</h1><div class="badge-row"><span class="badge @priorityClass">@Model.Priority priority</span><span class="badge @statusClass">@Model.Status</span></div></div>
+    <div class="header-actions"><a class="button button-secondary" asp-action="Edit" asp-route-id="@Model.Id">Edit</a><a class="button button-danger" asp-action="Delete" asp-route-id="@Model.Id">Delete</a></div>
+</div>
+
+<section class="details-grid">
+    <article class="panel span-2"><p class="eyebrow">ISSUE DESCRIPTION</p><p class="description-text">@Model.Description</p></article>
+    <article class="panel"><p class="eyebrow">REQUESTER</p><dl><dt>Name</dt><dd>@Model.RequesterName</dd><dt>Email</dt><dd>@(Model.RequesterEmail ?? "Not provided")</dd><dt>Category</dt><dd>@Model.Category</dd></dl></article>
+    <article class="panel"><p class="eyebrow">TIMELINE</p><dl><dt>Created</dt><dd>@Model.CreatedAt.ToLocalTime().ToString("MMM dd, yyyy HH:mm")</dd><dt>Updated</dt><dd>@(Model.UpdatedAt?.ToLocalTime().ToString("MMM dd, yyyy HH:mm") ?? "Not updated")</dd><dt>Resolved</dt><dd>@(Model.ResolvedAt?.ToLocalTime().ToString("MMM dd, yyyy HH:mm") ?? "Not resolved")</dd></dl></article>
+</section>
+
+<p><a asp-action="Index">← Back to tickets</a></p>

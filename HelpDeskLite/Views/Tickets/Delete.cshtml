@@ -1,0 +1,15 @@
+@model Ticket
+@{
+    ViewData["Title"] = "Delete ticket";
+}
+
+<section class="panel danger-panel">
+    <p class="eyebrow">DELETE TICKET #@Model.Id</p>
+    <h1>Are you sure?</h1>
+    <p>This will permanently delete <strong>@Model.Title</strong>. This action cannot be undone.</p>
+    <form asp-action="Delete" method="post" class="form-actions">
+        <input type="hidden" asp-for="Id" />
+        <a class="button button-ghost" asp-action="Details" asp-route-id="@Model.Id">Cancel</a>
+        <button class="button button-danger" type="submit">Delete ticket</button>
+    </form>
+</section>

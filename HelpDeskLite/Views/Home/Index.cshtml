@@ -1,0 +1,77 @@
+@model DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<section class="hero">
+    <div>
+        <p class="eyebrow">TECHNICAL SUPPORT WORKFLOW</p>
+        <h1>Support tickets, organized.</h1>
+        <p class="lead">Create, prioritize and track incidents from a simple dashboard.</p>
+    </div>
+    <a class="button button-primary" asp-controller="Tickets" asp-action="Create">Create ticket</a>
+</section>
+
+<section class="stats-grid" aria-label="Ticket summary">
+    <article class="stat-card"><span>Total</span><strong>@Model.TotalTickets</strong></article>
+    <article class="stat-card"><span>Open</span><strong>@Model.OpenTickets</strong></article>
+    <article class="stat-card"><span>In progress</span><strong>@Model.InProgressTickets</strong></article>
+    <article class="stat-card"><span>Resolved</span><strong>@Model.ResolvedTickets</strong></article>
+    <article class="stat-card"><span>Critical</span><strong>@Model.CriticalTickets</strong></article>
+</section>
+
+<section class="panel">
+    <div class="panel-header">
+        <div>
+            <p class="eyebrow">LATEST ACTIVITY</p>
+            <h2>Recent tickets</h2>
+        </div>
+        <a asp-controller="Tickets" asp-action="Index">View all</a>
+    </div>
+
+    @if (Model.RecentTickets.Count == 0)
+    {
+        <div class="empty-state">
+            <h3>No tickets yet</h3>
+            <p>Create the first ticket to start testing the workflow.</p>
+            <a class="button button-secondary" asp-controller="Tickets" asp-action="Create">Create first ticket</a>
+        </div>
+    }
+    else
+    {
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr><th>ID</th><th>Title</th><th>Requester</th><th>Priority</th><th>Status</th><th>Created</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var ticket in Model.RecentTickets)
+                    {
+                        var statusClass = ticket.Status switch
+                        {
+                            TicketStatus.Open => "badge-open",
+                            TicketStatus.InProgress => "badge-progress",
+                            TicketStatus.Resolved => "badge-resolved",
+                            _ => "badge-closed"
+                        };
+                        var priorityClass = ticket.Priority switch
+                        {
+                            TicketPriority.Critical => "badge-critical",
+                            TicketPriority.High => "badge-high",
+                            TicketPriority.Medium => "badge-medium",
+                            _ => "badge-low"
+                        };
+                        <tr>
+                            <td><a asp-controller="Tickets" asp-action="Details" asp-route-id="@ticket.Id">#@ticket.Id</a></td>
+                            <td>@ticket.Title</td>
+                            <td>@ticket.RequesterName</td>
+                            <td><span class="badge @priorityClass">@ticket.Priority</span></td>
+                            <td><span class="badge @statusClass">@ticket.Status</span></td>
+                            <td>@ticket.CreatedAt.ToLocalTime().ToString("MMM dd, yyyy")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</section>

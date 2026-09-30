@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - HelpDesk Lite</title>
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <header class="site-header">
+        <nav class="container nav-bar" aria-label="Main navigation">
+            <a class="brand" asp-controller="Home" asp-action="Index">HelpDesk Lite</a>
+            <div class="nav-links">
+                <a asp-controller="Home" asp-action="Index">Dashboard</a>
+                <a asp-controller="Tickets" asp-action="Index">Tickets</a>
+                <a class="button button-primary button-small" asp-controller="Tickets" asp-action="Create">New ticket</a>
+            </div>
+        </nav>
+    </header>
+
+    <main class="container main-content">
+        @if (TempData["SuccessMessage"] is string message)
+        {
+            <div class="alert alert-success" role="alert">@message</div>
+        }
+        @RenderBody()
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">HelpDesk Lite · Portfolio project by Jafeth Ríos</div>
+    </footer>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

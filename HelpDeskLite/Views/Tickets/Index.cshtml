@@ -1,0 +1,96 @@
+@model IEnumerable<Ticket>
+@{
+    ViewData["Title"] = "Tickets";
+    var selectedStatus = ViewBag.Status is TicketStatus statusValue ? statusValue : (TicketStatus?)null;
+    var selectedPriority = ViewBag.Priority is TicketPriority priorityValue ? priorityValue : (TicketPriority?)null;
+}
+
+<div class="page-header">
+    <div>
+        <p class="eyebrow">INCIDENT MANAGEMENT</p>
+        <h1>Tickets</h1>
+        <p>Search, filter and review support incidents.</p>
+    </div>
+    <a class="button button-primary" asp-action="Create">New ticket</a>
+</div>
+
+<form method="get" class="filter-bar">
+    <div class="field grow">
+        <label for="search">Search</label>
+        <input id="search" name="search" value="@ViewBag.Search" placeholder="Title, requester or category" />
+    </div>
+    <div class="field">
+        <label for="status">Status</label>
+        <select id="status" name="status" asp-items="Html.GetEnumSelectList<TicketStatus>()">
+            <option value="">All statuses</option>
+        </select>
+    </div>
+    <div class="field">
+        <label for="priority">Priority</label>
+        <select id="priority" name="priority" asp-items="Html.GetEnumSelectList<TicketPriority>()">
+            <option value="">All priorities</option>
+        </select>
+    </div>
+    <div class="filter-actions">
+        <button class="button button-secondary" type="submit">Filter</button>
+        <a class="button button-ghost" asp-action="Index">Clear</a>
+    </div>
+</form>
+
+<section class="panel">
+    @if (!Model.Any())
+    {
+        <div class="empty-state">
+            <h2>No matching tickets</h2>
+            <p>Create a ticket or change the current filters.</p>
+        </div>
+    }
+    else
+    {
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr><th>ID</th><th>Title</th><th>Requester</th><th>Category</th><th>Priority</th><th>Status</th><th>Created</th><th></th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var ticket in Model)
+                    {
+                        var statusClass = ticket.Status switch
+                        {
+                            TicketStatus.Open => "badge-open",
+                            TicketStatus.InProgress => "badge-progress",
+                            TicketStatus.Resolved => "badge-resolved",
+                            _ => "badge-closed"
+                        };
+                        var priorityClass = ticket.Priority switch
+                        {
+                            TicketPriority.Critical => "badge-critical",
+                            TicketPriority.High => "badge-high",
+                            TicketPriority.Medium => "badge-medium",
+                            _ => "badge-low"
+                        };
+                        <tr>
+                            <td><a asp-action="Details" asp-route-id="@ticket.Id">#@ticket.Id</a></td>
+                            <td>@ticket.Title</td>
+                            <td>@ticket.RequesterName</td>
+                            <td>@ticket.Category</td>
+                            <td><span class="badge @priorityClass">@ticket.Priority</span></td>
+                            <td><span class="badge @statusClass">@ticket.Status</span></td>
+                            <td>@ticket.CreatedAt.ToLocalTime().ToString("MMM dd, yyyy")</td>
+                            <td class="actions"><a asp-action="Edit" asp-route-id="@ticket.Id">Edit</a></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</section>
+
+@section Scripts {
+<script>
+    const status = document.getElementById('status');
+    const priority = document.getElementById('priority');
+    status.value = '@(selectedStatus.HasValue ? ((int)selectedStatus.Value).ToString() : string.Empty)';
+    priority.value = '@(selectedPriority.HasValue ? ((int)selectedPriority.Value).ToString() : string.Empty)';
+</script>
+}
